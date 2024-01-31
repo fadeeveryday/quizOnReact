@@ -23,21 +23,23 @@ const questions = [
   },
 ];
 
-function Result() {
+function Result( {count} ) {
   return (
     <div className="result">
       <img src="https://cdn-icons-png.flaticon.com/512/2278/2278992.png" />
-      <h2>Вы отгадали 3 ответа из 10</h2>
+      <h2>Вы отгадали {count} ответа из {questions.length}</h2>
       <button>Попробовать снова</button>
     </div>
   );
 }
 
-function Game({ question, onClickVariant }) {
+function Game({ step, question, onClickVariant }) {
+  const persentage = Math.round(step / questions.length * 100)
+
   return (
     <>
       <div className="progress">
-        <div style={{ width: '20%' }} className="progress__inner"></div>
+        <div style={{ width: `${persentage}%` }} className="progress__inner"></div>
       </div>
       <h1>{question.title}</h1>
       <ul>
@@ -56,18 +58,25 @@ function Game({ question, onClickVariant }) {
 
 function App() {
   const [step, setStep] = useState(0)
+  const [count, setCount] = useState(0)
   const question = questions[step]
 
   const onClickVariant = (index) => {
-    console.log(index, step)
     setStep(step + 1)
+
+    if(index === question.correct) setCount(count + 1)
   }
+  
 
 
   return (
     <div className="App">
-      <Game question={question} onClickVariant={onClickVariant} />
-      {/* <Result /> */}
+      {
+        step !== questions.length ?
+        <Game step={step} question={question} onClickVariant={onClickVariant} /> :
+        <Result count={count} />
+
+      }
     </div>
   );
 }
